@@ -249,7 +249,7 @@ shakespeare() {
 	echo "BUILDING SHAKESPEARE TESTS"
 	apt install curl -y
 
-	curl https://www.gutenberg.org/cache/epub/100/pg100.txt -o out/shakespeare/text.txt
+	curl https://www.gutenberg.org/cache/epub/100/pg100.txt -o shakespeare_test/text.txt
 }
 
 if [ $# -eq 0 ]; then

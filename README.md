@@ -38,6 +38,6 @@ The results are written in csv format to `out/synthetic_results.csv`
 2. Get every word from the file by splitting on lines, then words
 3. Count the length of every word into a a map and
 4. Calculate the average length of a word in shakespeare
-5. Calculate the msot common word of every length
+5. Get the top 3 most common words of 3+ letters
 
 The results are written in csv format to `out/shakespeare_results.csv`

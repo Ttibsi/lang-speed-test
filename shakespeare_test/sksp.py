@@ -18,7 +18,7 @@ def main() -> None:
 
     pprint(f"{length_counter=}")
 
-    avg_length = 0
+    avg_length: float = 0.0
     for k, v in length_counter.items():
         avg_length += k * v
 

@@ -245,9 +245,16 @@ view_synthetic() {
 	csvtool readable out/synthetic_results.csv | view -
 }
 
+shakespeare() {
+	echo "BUILDING SHAKESPEARE TESTS"
+	apt install curl -y
+
+	curl https://www.gutenberg.org/cache/epub/100/pg100.txt -o out/shakespeare/text.txt
+}
+
 if [ $# -eq 0 ]; then
 	echo "no command specified"
-	echo "(valid options: setup, synthetic)"
+	echo "(valid options: setup, synthetic, view, shakespeare)"
 	exit 0
 elif [ $1 == "setup" ]; then
 	setup
@@ -255,7 +262,10 @@ elif [ $1 == "setup" ]; then
 elif [ $1 == "synthetic" ]; then
 	synthetic
 	exit 0
-elif [ $1 == "synthetic" ]; then
+elif [ $1 == "view" ]; then
 	view-syn
+	exit 0
+elif [ $1 == "shakespeare" ]; then
+	shakespeare
 	exit 0
 fi

@@ -3,7 +3,7 @@
 A series of tests I wanted to write to test the speed of a few languages.
 
 Languages included:
-* C++ (Using g++ 13 and clang++ 18)
+* C++ (Using g++ 13, clang++ 18, and the latest Zig compiler)
 * Go
 * Rust
 * Zig
@@ -23,6 +23,7 @@ Languages included:
 	will fail
 * `./test.sh view-syn` to view the output of the synthetic tests in a
 	tabular format
+* `./test.sh shakespeare` to run the shakespeare test below
 
 ### Synthetic Test
 1. Read the number of iterations from an environment variable (SPEEDTEST_ITERS)
@@ -31,3 +32,12 @@ Languages included:
 4. Pop the first 10 off and append them to the end
 
 The results are written in csv format to `out/synthetic_results.csv`
+
+### Shakespeare Test
+1. Read the Gutenberg Shakepeare text file into memory
+2. Get every word from the file by splitting on lines, then words
+3. Count the length of every word into a a map and
+4. Calculate the average length of a word in shakespeare
+5. Calculate the msot common word of every length
+
+The results are written in csv format to `out/shakespeare_results.csv`

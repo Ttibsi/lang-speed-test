@@ -1,8 +1,6 @@
-
 set -eu
 
 setup() { 
-	# TODO: Compile c++ using zig
 	echo "SETTING UP ENVIRONMENT..."
 	apt update
 	apt install -y curl
@@ -112,6 +110,10 @@ synthetic()  {
 		echo "Building for zig"
 		zig build-exe synthetic_test/syn.zig --name syn_zig
 		mv syn_zig out/synthetic/zig
+
+		echo "Building c++ for zig"
+		zig c++ --std=c++20 synthetic_test/syn.cpp -o zig_cpp
+		mv zig_cpp out/synthetic/zig_cpp
 	fi
 
 	echo "RUNNING TESTS"
@@ -173,6 +175,14 @@ synthetic()  {
 		time1=$({ TIMEFORMAT="%R"; time out/synthetic/zig; } 2>&1 1>/dev/null)
 		time2=$({ TIMEFORMAT="%R"; time out/synthetic/zig; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time out/synthetic/zig; } 2>&1 1>/dev/null)
+
+		append_to_file "zig,$size,$time1,$time2,$time3"
+        
+		echo "running cpp zig"
+		size=$(stat -c%s "out/synthetic/zig_cpp")
+		time1=$({ TIMEFORMAT="%R"; time out/synthetic/zig_cpp; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/synthetic/zig_cpp; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/synthetic/zig_cpp; } 2>&1 1>/dev/null)
 
 		append_to_file "zig,$size,$time1,$time2,$time3"
 	fi

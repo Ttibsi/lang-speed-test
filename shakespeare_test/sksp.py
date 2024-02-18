@@ -6,15 +6,14 @@ def main() -> None:
     word_counter = Counter()
 
     with open("shakespeare_test/text.txt") as f:
-        lines: list[str] = f.readlines()
+        words: list[str] = f.read().split()
 
-    for line in lines:
-        words = line.split()
-        for word in words:
-            length_counter[len(word)] += 1
 
-            if len(word) >= 3:
-                word_counter[word] += 1
+    for word in words:
+        length_counter[len(word)] += 1
+
+        if len(word) >= 3:
+            word_counter[word] += 1
 
     pprint(f"{length_counter=}")
 

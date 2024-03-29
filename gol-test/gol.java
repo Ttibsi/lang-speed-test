@@ -23,8 +23,7 @@ class Gol {
             board[cell.x][cell.y] = true;
         }
 
-        // TODO: 100000
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100000; i++) {
             boolean[][] new_board = new boolean[50][50];
 
             for (int idx = 0; idx < 50; idx++) {

@@ -21,6 +21,10 @@ int main() {
         std::pair{0, +1}, std::pair{+1, -1}, std::pair{+1, 0}, std::pair{+1, +1},
     };
 
+	for (auto&& cell: glider_gun) {
+		board[cell.first][cell.second] = true;
+	}
+
     for (int i = 0; i < 100000; i++) {
         std::array<std::array<bool, 50>, 50> new_board;
 

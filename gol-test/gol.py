@@ -13,7 +13,7 @@ def main() -> None:
     ]
 
     for cell in glider_gun:
-        board[cell[0]][cell[1]] = 1
+        board[cell[0]][cell[1]] = True
 
     relatives: list[tuple[int, int]] = [
         (-1, -1),
@@ -51,9 +51,9 @@ def main() -> None:
     
                 if cell:
                     if live_neighbors == 2 or live_neighbors == 3:
-                        new_board[idx][idy] = 1
+                        new_board[idx][idy] = True
                     else:
-                        new_board[idx][idy] = 0
+                        new_board[idx][idy] = False
                 else:
                     new_board[idx][idy] = int(live_neighbors == 3)
     

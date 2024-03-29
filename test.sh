@@ -238,6 +238,12 @@ synthetic()  {
 	echo "COMPLETE"
 }
 
+game-of-life() {
+	echo "BUILDING GAME OF LIFE"
+	rm -rf out/gol
+	mkdir -p out/gol
+}
+
 view_synthetic() {
 	if ! [ -x "$(command -v csvtool)" ]; then
 		apt install csvtool -y
@@ -254,6 +260,9 @@ elif [ $1 == "setup" ]; then
 	exit 0
 elif [ $1 == "synthetic" ]; then
 	synthetic
+	exit 0
+elif [ $1 == "gol" ]; then
+	game-of-life
 	exit 0
 elif [ $1 == "synthetic" ]; then
 	view-syn

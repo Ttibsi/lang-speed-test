@@ -34,7 +34,7 @@ setup() {
 
 	if ! [ -x "$(command -v go)" ]; then
 		echo "INSTALLING GO"
-		curl -L  https://go.dev/dl/go1.21.6.linux-arm64.tar.gz -o go.tar
+		curl -L  https://go.dev/dl/go1.22.1.linux-arm64.tar.gz -o go.tar
 		tar -xzf go.tar
 		mv go /root/go
 		echo "export PATH=\"\$PATH:/root/go/bin\"" >> /root/.bashrc
@@ -276,7 +276,7 @@ game-of-life() {
 	if [ -x "$(command -v javac)" ]; then
 		echo "Building for java"
 		# NOTE: Java build files (*.class) can't have a different name to the source code files
-		javac -d out/gol gol_test/syn.java 
+		javac -d out/gol gol_test/gol.java 
 	fi
 
 	if [ -x "$(command -v zig)" ]; then

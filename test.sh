@@ -64,7 +64,7 @@ setup() {
 }
 
 append_to_file() {
-	echo "$1" >> out/synthetic_results.csv
+	echo "$1" >> out/"$2".csv
 }
 
 synthetic()  {
@@ -110,14 +110,16 @@ synthetic()  {
 		echo "Building for zig"
 		zig build-exe synthetic_test/syn.zig --name syn_zig
 		mv syn_zig out/synthetic/zig
+        rm syn_zig
 
 		echo "Building c++ for zig"
 		zig c++ --std=c++20 synthetic_test/syn.cpp -o zig_cpp
 		mv zig_cpp out/synthetic/zig_cpp
+        rm zig_cpp
 	fi
 
-	echo "RUNNING TESTS"
-	append_to_file "binary name,binary size (bytes),run1,run2,run3"
+	echo "RUNNING SYNTHETIC TESTS"
+	append_to_file "binary name,binary size (bytes),run1,run2,run3" "synthetic_results"
 
 	if [ -f "out/synthetic/g++_cpp" ]; then
 		echo "running g++_cpp"
@@ -126,7 +128,7 @@ synthetic()  {
 		time2=$({ TIMEFORMAT="%R"; time out/synthetic/g++_cpp; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time out/synthetic/g++_cpp; } 2>&1 1>/dev/null)
 
-		append_to_file "g++,$size,$time1,$time2,$time3"
+		append_to_file "g++,$size,$time1,$time2,$time3"  "synthetic_results"
 	fi
 
 	if [ -f "out/synthetic/clang_cpp" ]; then
@@ -136,7 +138,7 @@ synthetic()  {
 		time2=$({ TIMEFORMAT="%R"; time out/synthetic/clang_cpp; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time out/synthetic/clang_cpp; } 2>&1 1>/dev/null)
 
-		append_to_file "clang,$size,$time1,$time2,$time3"
+		append_to_file "clang,$size,$time1,$time2,$time3"  "synthetic_results"
 	fi
 
 	if [ -f "out/synthetic/rust" ]; then
@@ -146,7 +148,7 @@ synthetic()  {
 		time2=$({ TIMEFORMAT="%R"; time out/synthetic/rust; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time out/synthetic/rust; } 2>&1 1>/dev/null)
 
-		append_to_file "rust,$size,$time1,$time2,$time3"
+		append_to_file "rust,$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
 	if [ -f "out/synthetic/golang" ]; then
@@ -156,7 +158,7 @@ synthetic()  {
 		time2=$({ TIMEFORMAT="%R"; time out/synthetic/golang; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time out/synthetic/golang; } 2>&1 1>/dev/null)
 
-		append_to_file "golang,$size,$time1,$time2,$time3"
+		append_to_file "golang,$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
 	if [ -f "out/synthetic/synthetic.class" ]; then
@@ -166,7 +168,7 @@ synthetic()  {
 		time2=$({ TIMEFORMAT="%R"; time out/synthetic/synthetic.class; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time out/synthetic/synthetic.class; } 2>&1 1>/dev/null)
 
-		append_to_file "java,$size,$time1,$time2,$time3"
+		append_to_file "java,$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
 	if [ -f "out/synthetic/zig" ]; then
@@ -176,7 +178,7 @@ synthetic()  {
 		time2=$({ TIMEFORMAT="%R"; time out/synthetic/zig; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time out/synthetic/zig; } 2>&1 1>/dev/null)
 
-		append_to_file "zig,$size,$time1,$time2,$time3"
+		append_to_file "zig,$size,$time1,$time2,$time3" "synthetic_results"
         
 		echo "running cpp zig"
 		size=$(stat -c%s "out/synthetic/zig_cpp")
@@ -184,7 +186,7 @@ synthetic()  {
 		time2=$({ TIMEFORMAT="%R"; time out/synthetic/zig_cpp; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time out/synthetic/zig_cpp; } 2>&1 1>/dev/null)
 
-		append_to_file "zig,$size,$time1,$time2,$time3"
+		append_to_file "zig,$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
 	if [ -x "$(command -v 'python3.10')" ]; then
@@ -193,14 +195,14 @@ synthetic()  {
 		time1=$({ TIMEFORMAT="%R"; time python3.10 synthetic_test/syn.py; } 2>&1 1>/dev/null)
 		time2=$({ TIMEFORMAT="%R"; time python3.10 synthetic_test/syn.py; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time python3.10 synthetic_test/syn.py; } 2>&1 1>/dev/null)
-		append_to_file "python3.10,$size,$time1,$time2,$time3"
+		append_to_file "python3.10,$size,$time1,$time2,$time3" "synthetic_results"
 
 		size=$(stat -c%s "synthetic_test/syn_untyped.py")
 		time1=$({ TIMEFORMAT="%R"; time python3.10 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
 		time2=$({ TIMEFORMAT="%R"; time python3.10 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time python3.10 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
 
-		append_to_file "python3.10 (untyped),$size,$time1,$time2,$time3"
+		append_to_file "python3.10 (untyped),$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 	
 	if [ -x "$(command -v 'python3.11')" ]; then
@@ -209,14 +211,14 @@ synthetic()  {
 		time1=$({ TIMEFORMAT="%R"; time python3.11 synthetic_test/syn.py; } 2>&1 1>/dev/null)
 		time2=$({ TIMEFORMAT="%R"; time python3.11 synthetic_test/syn.py; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time python3.11 synthetic_test/syn.py; } 2>&1 1>/dev/null)
-		append_to_file "python3.11,$size,$time1,$time2,$time3"
+		append_to_file "python3.11,$size,$time1,$time2,$time3" "synthetic_results"
 		
 		size=$(stat -c%s "synthetic_test/syn_untyped.py")
 		time1=$({ TIMEFORMAT="%R"; time python3.11 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
 		time2=$({ TIMEFORMAT="%R"; time python3.11 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time python3.11 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
 
-		append_to_file "python3.11 (untyped),$size,$time1,$time2,$time3"
+		append_to_file "python3.11 (untyped),$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
 	if [ -x "$(command -v 'python3.12')" ]; then
@@ -225,23 +227,17 @@ synthetic()  {
 		time1=$({ TIMEFORMAT="%R"; time python3.12 synthetic_test/syn.py; } 2>&1 1>/dev/null)
 		time2=$({ TIMEFORMAT="%R"; time python3.12 synthetic_test/syn.py; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time python3.12 synthetic_test/syn.py; } 2>&1 1>/dev/null)
-		append_to_file "python3.12,$size,$time1,$time2,$time3"
+		append_to_file "python3.12,$size,$time1,$time2,$time3" "synthetic_results"
 
 		size=$(stat -c%s "synthetic_test/syn_untyped.py")
 		time1=$({ TIMEFORMAT="%R"; time python3.12 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
 		time2=$({ TIMEFORMAT="%R"; time python3.12 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time python3.12 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
 
-		append_to_file "python3.12 (untyped),$size,$time1,$time2,$time3"
+		append_to_file "python3.12 (untyped),$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
 	echo "COMPLETE"
-}
-
-game-of-life() {
-	echo "BUILDING GAME OF LIFE"
-	rm -rf out/gol
-	mkdir -p out/gol
 }
 
 view_synthetic() {
@@ -251,9 +247,173 @@ view_synthetic() {
 	csvtool readable out/synthetic_results.csv | view -
 }
 
+game-of-life() {
+	echo "BUILDING GAME OF LIFE"
+	rm -rf out/gol
+	mkdir -p out/gol
+
+	if [ -x "$(command -v g++-13)" ]; then
+		echo "Building for g++"
+		g++-13 -std=c++20 gol_test/gol.cpp -o out/gol/g++_cpp
+	fi
+
+	if [ -x "$(command -v clang++-18)" ]; then
+		echo "Building for clang++"
+		clang++-18 -std=c++20 gol_test/gol.cpp -o out/gol/clang_cpp
+	fi
+
+	if [ -x "$(command -v rustc)" ]; then
+		echo "Building for rust"
+		apt install build-essential -y
+		rustc gol_test/gol.rs -o out/gol/rust
+	fi
+
+	if [ -x "$(command -v go)" ]; then
+		echo "Building for go"
+		go build -o out/gol/golang gol_test/gol.go
+	fi
+
+	if [ -x "$(command -v javac)" ]; then
+		echo "Building for java"
+		# NOTE: Java build files (*.class) can't have a different name to the source code files
+		javac -d out/gol gol_test/syn.java 
+	fi
+
+	if [ -x "$(command -v zig)" ]; then
+		echo "Building for zig"
+		zig build-exe gol_test/gol.zig --name gol_zig
+		mv gol_zig out/gol/zig
+        rm gol_zig
+
+		echo "Building c++ for zig"
+		zig c++ --std=c++20 gol_test/gol.cpp -o zig_cpp
+		mv zig_cpp out/gol/zig_cpp
+        rm zig_cpp
+	fi
+
+	echo "RUNNING GAME OF LIFE TESTS"
+	append_to_file "binary name,binary size (bytes),run1,run2,run3" "gol_results"
+
+	if [ -f "out/gol/g++_cpp" ]; then
+		echo "running g++_cpp"
+		size=$(stat -c%s "out/gol/g++_cpp")
+		time1=$({ TIMEFORMAT="%R"; time out/gol/g++_cpp; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/gol/g++_cpp; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/gol/g++_cpp; } 2>&1 1>/dev/null)
+
+		append_to_file "g++,$size,$time1,$time2,$time3"  "gol_results"
+	fi
+
+	if [ -f "out/gol/clang_cpp" ]; then
+		echo "running clang_cpp"
+		size=$(stat -c%s "out/gol/clang_cpp")
+		time1=$({ TIMEFORMAT="%R"; time out/gol/clang_cpp; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/gol/clang_cpp; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/gol/clang_cpp; } 2>&1 1>/dev/null)
+
+		append_to_file "clang,$size,$time1,$time2,$time3"  "gol_results"
+	fi
+
+	if [ -f "out/gol/rust" ]; then
+		echo "running rust"
+		size=$(stat -c%s "out/gol/rust")
+		time1=$({ TIMEFORMAT="%R"; time out/gol/rust; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/gol/rust; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/gol/rust; } 2>&1 1>/dev/null)
+
+		append_to_file "rust,$size,$time1,$time2,$time3" "gol_results"
+	fi
+
+	if [ -f "out/gol/golang" ]; then
+		echo "running golang"
+		size=$(stat -c%s "out/gol/golang")
+		time1=$({ TIMEFORMAT="%R"; time out/gol/golang; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/gol/golang; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/gol/golang; } 2>&1 1>/dev/null)
+
+		append_to_file "golang,$size,$time1,$time2,$time3" "gol_results"
+	fi
+
+	if [ -f "out/gol/gol.class" ]; then
+		echo "running java"
+		size=$(stat -c%s "out/gol/gol.class")
+		time1=$({ TIMEFORMAT="%R"; time out/gol/gol.class; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/gol/gol.class; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/gol/gol.class; } 2>&1 1>/dev/null)
+
+		append_to_file "java,$size,$time1,$time2,$time3" "gol_results"
+	fi
+
+	if [ -f "out/gol/zig" ]; then
+		echo "running zig"
+		size=$(stat -c%s "out/gol/zig")
+		time1=$({ TIMEFORMAT="%R"; time out/gol/zig; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/gol/zig; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/gol/zig; } 2>&1 1>/dev/null)
+
+		append_to_file "zig,$size,$time1,$time2,$time3" "gol_results"
+        
+		echo "running cpp zig"
+		size=$(stat -c%s "out/gol/zig_cpp")
+		time1=$({ TIMEFORMAT="%R"; time out/gol/zig_cpp; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/gol/zig_cpp; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/gol/zig_cpp; } 2>&1 1>/dev/null)
+
+		append_to_file "zig,$size,$time1,$time2,$time3" "gol_results"
+	fi
+
+	if [ -x "$(command -v 'python3.10')" ]; then
+		echo "running python3.10"
+		size=$(stat -c%s "gol_test/gol.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.10 gol_test/gol.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.10 gol_test/gol.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.10 gol_test/gol.py; } 2>&1 1>/dev/null)
+		append_to_file "python3.10,$size,$time1,$time2,$time3" "gol_results"
+
+		size=$(stat -c%s "gol_test/gol_untyped.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.10 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.10 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.10 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+
+		append_to_file "python3.10 (untyped),$size,$time1,$time2,$time3" "gol_results"
+	fi
+	
+	if [ -x "$(command -v 'python3.11')" ]; then
+		echo "running python3.11"
+		size=$(stat -c%s "gol_test/gol.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.11 gol_test/gol.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.11 gol_test/gol.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.11 gol_test/gol.py; } 2>&1 1>/dev/null)
+		append_to_file "python3.11,$size,$time1,$time2,$time3" "gol_results"
+		
+		size=$(stat -c%s "gol_test/gol_untyped.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.11 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.11 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.11 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+
+		append_to_file "python3.11 (untyped),$size,$time1,$time2,$time3" "gol_results"
+	fi
+
+	if [ -x "$(command -v 'python3.12')" ]; then
+		echo "running python3.12"
+		size=$(stat -c%s "gol_test/gol.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.12 gol_test/gol.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.12 gol_test/gol.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.12 gol_test/gol.py; } 2>&1 1>/dev/null)
+		append_to_file "python3.12,$size,$time1,$time2,$time3" "gol_results"
+
+		size=$(stat -c%s "gol_test/gol_untyped.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.12 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.12 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.12 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+
+		append_to_file "python3.12 (untyped),$size,$time1,$time2,$time3" "gol_results"
+	fi
+}
+
 if [ $# -eq 0 ]; then
 	echo "no command specified"
-	echo "(valid options: setup, synthetic)"
+	echo "(valid options: gol, setup, synthetic, view-results)"
 	exit 0
 elif [ $1 == "setup" ]; then
 	setup
@@ -261,10 +421,10 @@ elif [ $1 == "setup" ]; then
 elif [ $1 == "synthetic" ]; then
 	synthetic
 	exit 0
-elif [ $1 == "gol" ]; then
-	game-of-life
-	exit 0
-elif [ $1 == "synthetic" ]; then
+elif [ $1 == "view-results" ]; then
 	view-syn
 	exit 0
+elif [ $1 == "gol" ]; then
+    game-of-life
+    exit 0
 fi

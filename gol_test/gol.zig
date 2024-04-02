@@ -16,7 +16,7 @@ pub fn main() !void {
     };
 
     for (glider_gun) |cell| {
-        board[cell.@"0"][cell.@"1"] = true;
+        board[@intCast(cell.@"0")][@intCast(cell.@"1")] = true;
     }
 
     for (0..100000) |_| {
@@ -27,18 +27,20 @@ pub fn main() !void {
                 var live_neighbors: i32 = 0;
 
                 for (relatives) |rel| {
-                    const check_x: i32 = idx + rel.@"0";
-                    const check_y: i32 = idy + rel.@"1";
+                    const check_x: i32 = @as(i32, @intCast(idx)) + rel.@"0";
+                    const check_y: i32 = @as(i32, @intCast(idy)) + rel.@"1";
 
-                    if (check_x < 50) &&(check_y < 50){if (board[check_x][check_y]) {
-                        live_neighbors += 1;
-                    }};
+                    if (check_x < 50 and check_y < 50) {
+                        if (board[@intCast(check_x)][@intCast(check_y)]) {
+                            live_neighbors += 1;
+                        }
+                    }
                 }
 
                 if (board[idx][idy]) {
-                    new_board[idx][idy] = if ((live_neighbors == 2) || (live_neighbors == 3)) 1 else 0;
+                    new_board[idx][idy] = if (live_neighbors == 2 or live_neighbors == 3) true else false;
                 } else {
-                    new_board[idx][idy] = if (live_neighbors == 3) 1 else 0;
+                    new_board[idx][idy] = if (live_neighbors == 3) true else false;
                 }
             }
         }
@@ -61,6 +63,6 @@ pub fn main() !void {
     };
 
     for (filled_cells) |cell| {
-        std.debug.assert(board[cell.@"0"][cell.@"1"] == true);
+        std.debug.assert(board[@intCast(cell.@"0")][@intCast(cell.@"1")] == true);
     }
 }

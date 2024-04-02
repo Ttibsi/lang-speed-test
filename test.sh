@@ -1,6 +1,14 @@
 set -eu
 
 setup() { 
+	ARCH=$1 
+    echo ${ARCH}
+    valid_arches=(arm x86)
+    if ! [[ " ${valid_arches[@]} " =~ " ${ARCH} " ]]; then
+        echo "Invalid arch. (arm, x86)"
+        exit 1
+    fi 
+
 	echo "SETTING UP ENVIRONMENT..."
 	apt update
 	apt install -y curl
@@ -34,7 +42,13 @@ setup() {
 
 	if ! [ -x "$(command -v go)" ]; then
 		echo "INSTALLING GO"
-		curl -L  https://go.dev/dl/go1.22.1.linux-arm64.tar.gz -o go.tar
+
+        if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
+			curl -L  https://go.dev/dl/go1.22.1.linux-arm64.tar.gz -o go.tar
+        elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
+			curl -L  https://go.dev/dl/go1.22.1.linux-amd64.tar.gz -o go.tar
+		fi
+
 		tar -xzf go.tar
 		mv go /root/go
 		echo "export PATH=\"\$PATH:/root/go/bin\"" >> /root/.bashrc
@@ -44,19 +58,28 @@ setup() {
 	if ! [ -x "$(command -v javac)" ]; then
 		echo "INSTALLING JAVA"
 		# https://jdk.java.net/21/
-		curl -L https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-aarch64_bin.tar.gz -o java.tar
+        if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
+            curl -L https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-aarch64_bin.tar.gz -o java.tar
+        elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
+			curl -L https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-x64_bin.tar.gz -o java.tar
+		fi
+
 	       	tar -xzf java.tar
-		mv jdk-21.0.2 /root/jdk
+		mv jdk-22 /root/jdk
 		echo "export PATH=\"\$PATH:/root/jdk/bin\"" >> /root/.bashrc
 	fi
 
 	if ! [ -x "$(command -v zig)" ]; then
 		echo "INSTALLING ZIG"
 		apt install -y xz-utils
-		curl -L https://ziglang.org/builds/zig-linux-aarch64-0.12.0-dev.2341+92211135f.tar.xz -o zig.tar
+        if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
+            curl -L https://ziglang.org/download/0.11.0/zig-linux-aarch64-0.11.0.tar.xz -o zig.tar
+        elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
+			curl -L https://ziglang.org/download/0.11.0/zig-linux-x86_64-0.11.0.tar.xz -o zig.tar
+		fi
 		mkdir zig
 		tar -xf zig.tar -C zig
-		mv zig/zig-linux-aarch64-0.12.0-dev.2341+92211135f /root/zig
+		mv zig/* /root/zig
 		echo "export PATH=\"\$PATH:/root/zig\"" >> /root/.bashrc
 	fi
 
@@ -416,7 +439,7 @@ if [ $# -eq 0 ]; then
 	echo "(valid options: gol, setup, synthetic, view-results)"
 	exit 0
 elif [ $1 == "setup" ]; then
-	setup
+	setup $2
 	exit 0
 elif [ $1 == "synthetic" ]; then
 	synthetic

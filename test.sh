@@ -83,6 +83,26 @@ setup() {
 		echo "export PATH=\"\$PATH:/root/zig\"" >> /root/.bashrc
 	fi
 
+    if ! [ -x "$(command -v swift)" ]; then
+        apt-get install binutils git gnupg2 libc6-dev libcurl4-openssl-dev libedit2 \
+                libgcc-9-dev libncurses6 libpython3.8 libsqlite3-0 libstdc++-9-dev \
+                libxml2-dev libz3-dev pkg-config tzdata unzip zlib1g-dev
+
+        if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
+                curl -L https://download.swift.org/swift-5.10-release/ubuntu2204-aarch64/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04-aarch64.tar.gz -o swift.tar
+                tar xzf swift.tar
+                mkdir swiftlang
+                mv swift-5.10-RELEASE-ubuntu22.04-aarch64/* swiftlang
+        elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
+                curl -L https://download.swift.org/swift-5.10-release/ubuntu2204/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04.tar.gz -o swift.tar
+                tar xzf swift.tar
+                mkdir swiftlang
+                mv swift-5.10-RELEASE-ubuntu22.04/* swiftlang
+        fi
+        mv swiftlang /root/swiftlang
+        echo "export PATH=\"\$PATH:/root/swiftlang/usr/bin\"" >> /root/.bashrc
+    fi
+
 	echo "run 'source /root/.bashrc' after setup"
 }
 

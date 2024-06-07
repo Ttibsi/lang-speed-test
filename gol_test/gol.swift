@@ -15,35 +15,35 @@ for cell in glider_gun {
 let relatives: [position] = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
 // 100,000 iterations
-for i in 1..100000 {
+for _ in 1...100000 {
     var new_board = Array(repeating: Array(repeating: false, count:50), count: 50)
-        for (idx, row) in new_board.enumerated() {
-            for (idy, cell) in row.enumerated() {
-                // check each neighbor
-                var live_neighbors = 0
+    for (idx, row) in new_board.enumerated() {
+        for (idy, cell) in row.enumerated() {
+            // check each neighbor
+            var live_neighbors = 0
 
-                    for rel in relatives {
-                        if let board[idx+rel.vert][idy+rel.hor] = true {
-                            live_neighbors += 1
-                        }
+                for rel in relatives {
+                    if case board[idx+rel.vert][idy+rel.hor] = true {
+                        live_neighbors += 1
                     }
-
-                // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
-                // Any live cell with two or three live neighbors lives on to the next generation.
-                // Any live cell with more than three live neighbors dies, as if by overpopulation.
-                // Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
-
-                if cell {
-                    if live_neighbors == 2 or live_neighbors == 3 {
-                        new_board[idx][idy] = true
-                    } else { 
-                        new_board[idx][idy] = false
-                    }
-                } else {
-                    new_board[idx][idy] = (live_neighbors == 3)
                 }
+
+            // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
+            // Any live cell with two or three live neighbors lives on to the next generation.
+            // Any live cell with more than three live neighbors dies, as if by overpopulation.
+            // Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+
+            if cell {
+                if live_neighbors == 2 || live_neighbors == 3 {
+                    new_board[idx][idy] = true
+                } else { 
+                    new_board[idx][idy] = false
+                }
+            } else {
+                new_board[idx][idy] = (live_neighbors == 3)
             }
-        } 
+        }
+    } 
 
     board = new_board
 }

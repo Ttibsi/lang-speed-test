@@ -1,7 +1,7 @@
 set -eu
 
 setup() { 
-	ARCH=$1 
+    ARCH=$1 
     echo ${ARCH}
     valid_arches=(arm x86)
     if ! [[ " ${valid_arches[@]} " =~ " ${ARCH} " ]]; then
@@ -9,81 +9,101 @@ setup() {
         exit 1
     fi 
 
-	echo "SETTING UP ENVIRONMENT..."
-	apt update
-	apt install -y curl
+    echo "SETTING UP ENVIRONMENT..."
+    apt update
+    apt install -y curl
 
-	if ! [ -x "$(command -v "g++-13")" ]; then
-		echo "INSTALLING GDB"
-		apt install software-properties-common -y
-		add-apt-repository -y ppa:ubuntu-toolchain-r/test
-		apt update 
-		apt install -y g++-13
-	fi
+    if ! [ -x "$(command -v "g++-13")" ]; then
+        echo "INSTALLING GDB"
+        apt install software-properties-common -y
+        add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        apt update 
+        apt install -y g++-13
+    fi
 
-	if ! [ -x "$(command -v "clang++-18")" ]; then
-		echo "INSTALLING CLANG"
-		apt install lsb-release wget software-properties-common gnupg -y
-		curl https://apt.llvm.org/llvm.sh -o llvm.sh
-		bash llvm.sh
-	fi
+    if ! [ -x "$(command -v "clang++-18")" ]; then
+        echo "INSTALLING CLANG"
+        apt install lsb-release wget software-properties-common gnupg -y
+        curl https://apt.llvm.org/llvm.sh -o llvm.sh
+        bash llvm.sh
+    fi
 
-	if ! [ -x "$(command -v "python3.11")" ]; then
-		echo "INSTALLING PYTHON"
-		add-apt-repository -y ppa:deadsnakes/ppa
-		apt install -y python3.11 python3.12
-	fi
+    if ! [ -x "$(command -v "python3.11")" ]; then
+        echo "INSTALLING PYTHON"
+        add-apt-repository -y ppa:deadsnakes/ppa
+        apt install -y python3.11 python3.12
+    fi
 
-	if ! [ -x "$(command -v rustc)" ]; then
-		echo "INSTALLING RUST"
-		curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-		echo "export PATH=\"\$PATH:/root/.cargo/bin\"" >> /root/.bashrc
-	fi
+    if ! [ -x "$(command -v rustc)" ]; then
+        echo "INSTALLING RUST"
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        echo "export PATH=\"\$PATH:/root/.cargo/bin\"" >> /root/.bashrc
+    fi
 
-	if ! [ -x "$(command -v go)" ]; then
-		echo "INSTALLING GO"
+    if ! [ -x "$(command -v go)" ]; then
+        echo "INSTALLING GO"
 
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-			curl -L  https://go.dev/dl/go1.22.1.linux-arm64.tar.gz -o go.tar
+            curl -L  https://go.dev/dl/go1.22.1.linux-arm64.tar.gz -o go.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-			curl -L  https://go.dev/dl/go1.22.1.linux-amd64.tar.gz -o go.tar
-		fi
+            curl -L  https://go.dev/dl/go1.22.1.linux-amd64.tar.gz -o go.tar
+        fi
 
-		tar -xzf go.tar
-		mv go /root/go
-		echo "export PATH=\"\$PATH:/root/go/bin\"" >> /root/.bashrc
-		
-	fi
+        tar -xzf go.tar
+        mv go /root/go
+        echo "export PATH=\"\$PATH:/root/go/bin\"" >> /root/.bashrc
 
-	if ! [ -x "$(command -v javac)" ]; then
-		echo "INSTALLING JAVA"
-		# https://jdk.java.net/21/
+    fi
+
+    if ! [ -x "$(command -v javac)" ]; then
+        echo "INSTALLING JAVA"
+        # https://jdk.java.net/21/
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
             curl -L https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-aarch64_bin.tar.gz -o java.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-			curl -L https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-x64_bin.tar.gz -o java.tar
-		fi
+            curl -L https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-x64_bin.tar.gz -o java.tar
+        fi
 
-	       	tar -xzf java.tar
-		mv jdk-22 /root/jdk
-		echo "export PATH=\"\$PATH:/root/jdk/bin\"" >> /root/.bashrc
-	fi
+        tar -xzf java.tar
+        mv jdk-22 /root/jdk
+        echo "export PATH=\"\$PATH:/root/jdk/bin\"" >> /root/.bashrc
+    fi
 
-	if ! [ -x "$(command -v zig)" ]; then
-		echo "INSTALLING ZIG"
-		apt install -y xz-utils
+    if ! [ -x "$(command -v zig)" ]; then
+        echo "INSTALLING ZIG"
+        apt install -y xz-utils
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
             curl -L https://ziglang.org/download/0.11.0/zig-linux-aarch64-0.11.0.tar.xz -o zig.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-			curl -L https://ziglang.org/download/0.11.0/zig-linux-x86_64-0.11.0.tar.xz -o zig.tar
-		fi
-		mkdir zig
-		tar -xf zig.tar -C zig
-		mv zig/* /root/zig
-		echo "export PATH=\"\$PATH:/root/zig\"" >> /root/.bashrc
-	fi
+            curl -L https://ziglang.org/download/0.11.0/zig-linux-x86_64-0.11.0.tar.xz -o zig.tar
+        fi
+        mkdir zig
+        tar -xf zig.tar -C zig
+        mv zig/* /root/zig
+        echo "export PATH=\"\$PATH:/root/zig\"" >> /root/.bashrc
+    fi
 
-	echo "run 'source /root/.bashrc' after setup"
+    if ! [ -x "$(command -v swift)" ]; then
+        apt-get install binutils git gnupg2 libc6-dev libcurl4-openssl-dev libedit2 \
+            libgcc-9-dev libncurses6 libpython3.8 libsqlite3-0 libstdc++-9-dev \
+            libxml2-dev libz3-dev pkg-config tzdata unzip zlib1g-dev
+
+        if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
+            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204-aarch64/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04-aarch64.tar.gz -o swift.tar
+            tar xzf swift.tar
+            mkdir swiftlang
+            mv swift-5.10-RELEASE-ubuntu22.04-aarch64/* swiftlang
+        elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
+            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04.tar.gz -o swift.tar
+            tar xzf swift.tar
+            mkdir swiftlang
+            mv swift-5.10-RELEASE-ubuntu22.04/* swiftlang
+        fi
+        mv swiftlang /root/swiftlang
+        echo "export PATH=\"\$PATH:/root/swiftlang/usr/bin\"" >> /root/.bashrc
+    fi
+
+    echo "run 'source /root/.bashrc' after setup"
 }
 
 append_to_file() {
@@ -140,6 +160,11 @@ synthetic()  {
 		mv zig_cpp out/synthetic/zig_cpp
         rm zig_cpp
 	fi
+
+	if [ -x "$(command -v swift)" ]; then
+		echo "Building for swift"
+		swiftc synthetic_test/syn.swift -o out/synthetic/swift
+    fi
 
 	echo "RUNNING SYNTHETIC TESTS"
 	append_to_file "binary name,binary size (bytes),run1,run2,run3" "synthetic_results"
@@ -212,6 +237,16 @@ synthetic()  {
 		append_to_file "zig,$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
+	if [ -f "out/synthetic/swift" ]; then
+		echo "running swift"
+		size=$(stat -c%s "out/synthetic/swift")
+		time1=$({ TIMEFORMAT="%R"; time out/synthetic/swift; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/synthetic/swift; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/synthetic/swift; } 2>&1 1>/dev/null)
+
+		append_to_file "swift,$size,$time1,$time2,$time3" "synthetic_results"
+	fi
+
 	if [ -x "$(command -v 'python3.10')" ]; then
 		echo "running python3.10"
 		size=$(stat -c%s "synthetic_test/syn.py")
@@ -268,6 +303,7 @@ view_synthetic() {
 		apt install csvtool -y
 	fi
 	csvtool readable out/synthetic_results.csv | view -
+	csvtool readable out/gol_results.csv | view -
 }
 
 game-of-life() {
@@ -313,6 +349,11 @@ game-of-life() {
 		mv zig_cpp out/gol/zig_cpp
         rm zig_cpp
 	fi
+
+	if [ -x "$(command -v swift)" ]; then
+		echo "Building for swift"
+		swiftc gol_test/gol.swift -o out/gol/swift
+    fi
 
 	echo "RUNNING GAME OF LIFE TESTS"
 	append_to_file "binary name,binary size (bytes),run1,run2,run3" "gol_results"
@@ -383,6 +424,16 @@ game-of-life() {
 		time3=$({ TIMEFORMAT="%R"; time out/gol/zig_cpp; } 2>&1 1>/dev/null)
 
 		append_to_file "zig,$size,$time1,$time2,$time3" "gol_results"
+	fi
+
+	if [ -f "out/gol/swift" ]; then
+		echo "running swift"
+		size=$(stat -c%s "out/gol/swift")
+		time1=$({ TIMEFORMAT="%R"; time out/gol/swift; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time out/gol/swift; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time out/gol/swift; } 2>&1 1>/dev/null)
+
+		append_to_file "swift,$size,$time1,$time2,$time3" "gol_results"
 	fi
 
 	if [ -x "$(command -v 'python3.10')" ]; then

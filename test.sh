@@ -153,12 +153,11 @@ synthetic()  {
 		echo "Building for zig"
 		zig build-exe synthetic_test/syn.zig --name syn_zig
 		mv syn_zig out/synthetic/zig
-        rm syn_zig
+        rm syn_zig.o
 
 		echo "Building c++ for zig"
 		zig c++ --std=c++20 synthetic_test/syn.cpp -o zig_cpp
 		mv zig_cpp out/synthetic/zig_cpp
-        rm zig_cpp
 	fi
 
 	if [ -x "$(command -v swift)" ]; then
@@ -342,12 +341,10 @@ game-of-life() {
 		echo "Building for zig"
 		zig build-exe gol_test/gol.zig --name gol_zig
 		mv gol_zig out/gol/zig
-        rm gol_zig
 
 		echo "Building c++ for zig"
 		zig c++ --std=c++20 gol_test/gol.cpp -o zig_cpp
 		mv zig_cpp out/gol/zig_cpp
-        rm zig_cpp
 	fi
 
 	if [ -x "$(command -v swift)" ]; then
@@ -496,7 +493,7 @@ elif [ $1 == "synthetic" ]; then
 	synthetic
 	exit 0
 elif [ $1 == "view-results" ]; then
-	view-syn
+	view-synthetic
 	exit 0
 elif [ $1 == "gol" ]; then
     game-of-life

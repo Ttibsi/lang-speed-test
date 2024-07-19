@@ -8,12 +8,16 @@ Languages included:
 * Rust
 * Zig
 * Java (using openJDK 21)
+* Swift
 * Python3 (3.10, 3.11, 3.12)
 	* This probably won't compare to the other languages
 	* Python is included predominantly becaue I wanted to compare the
 	speed improvements of recent releases
 	* I'm also taking into account the interpreter cost of using 
 	various good practices (type hints, `if __name__ == "__main__"`)
+* Lua 5 (5.1, 5.2, 5.3, 5.4)
+    * As above, this likely doesn't compare to the compiled languages. 
+    I want to compare it to python
 
 ## To run
 * `./test.sh setup` to set up your environment and install the requirements 
@@ -23,6 +27,7 @@ Languages included:
 	will fail
 * `./test.sh view-syn` to view the output of the synthetic tests in a
 	tabular format
+* `./test.sh gol` to run the game of life test listed below
 
 ### Synthetic Test
 1. Read the number of iterations from an environment variable (SPEEDTEST_ITERS)
@@ -31,3 +36,7 @@ Languages included:
 4. Pop the first 10 off and append them to the end
 
 The results are written in csv format to `out/synthetic_results.csv`
+
+### gol test
+This runs game of life starting with the gospel glider gun and
+iterating 100,000 times

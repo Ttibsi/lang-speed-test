@@ -30,7 +30,7 @@ pub fn main() !void {
                     const check_x: i32 = @as(i32, @intCast(idx)) + rel.@"0";
                     const check_y: i32 = @as(i32, @intCast(idy)) + rel.@"1";
 
-                    if (check_x < 50 and check_y < 50) {
+                    if (check_x < 50 and check_y < 50 and check_x >= 0 and check_y >= 0) {
                         if (board[@intCast(check_x)][@intCast(check_y)]) {
                             live_neighbors += 1;
                         }

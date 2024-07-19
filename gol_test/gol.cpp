@@ -1,77 +1,72 @@
+#include <iostream>
 #include <array>
 #include <cassert>
-#include <stdexcept>
-#include <tuple>
 
 int main() {
-    std::array<std::array<bool, 50>, 50> board;
-    std::array<std::pair<int, int>, 36> glider_gun = {
-        std::pair{1, 5}, std::pair{1, 6}, std::pair{2, 5}, std::pair{2, 6}, 
-        std::pair{11, 5}, std::pair{11, 6}, std::pair{11, 7}, std::pair{12, 4}, 
-        std::pair{12, 8}, std::pair{13, 3}, std::pair{13, 9}, std::pair{14, 3}, 
-        std::pair{14, 9}, std::pair{15, 6}, std::pair{16, 4}, std::pair{16, 8}, 
-        std::pair{17, 5}, std::pair{17, 6}, std::pair{17, 7}, std::pair{18, 6}, 
-        std::pair{21, 3}, std::pair{21, 4}, std::pair{21, 5}, std::pair{22, 3}, 
-        std::pair{22, 4}, std::pair{22, 5}, std::pair{23, 2}, std::pair{23, 6}, 
-        std::pair{25, 1}, std::pair{25, 2}, std::pair{25, 6}, std::pair{25, 7}, 
-        std::pair{35, 3}, std::pair{35, 4}, std::pair{36, 3}, std::pair{36, 4}
-    };
-    std::array<std::pair<int, int>, 8> relatives = {
-        std::pair{-1, -1}, std::pair{-1, 0}, std::pair{-1, 1}, std::pair{0, -1},
-        std::pair{0, +1}, std::pair{+1, -1}, std::pair{+1, 0}, std::pair{+1, +1},
-    };
+    // Construct 50x50 board
+    std::array<std::array<bool, 50>, 50> board = {};
 
-	for (auto&& cell: glider_gun) {
-		board[cell.first][cell.second] = true;
-	}
+    // Populate certain cells 
+    std::array<std::pair<int, int>, 36> glider_gun = {{
+        {1, 5}, {1, 6}, {2, 5}, {2, 6}, {11, 5}, {11, 6}, {11, 7}, {12, 4}, {12, 8}, {13, 3}, {13, 9}, {14, 3}, {14, 9},
+        {15, 6}, {16, 4}, {16, 8}, {17, 5}, {17, 6}, {17, 7}, {18, 6}, {21, 3}, {21, 4}, {21, 5}, {22, 3}, {22, 4}, {22, 5},
+        {23, 2}, {23, 6}, {25, 1}, {25, 2}, {25, 6}, {25, 7}, {35, 3}, {35, 4}, {36, 3}, {36, 4}
+    }};
 
-    for (int i = 0; i < 100000; i++) {
-        std::array<std::array<bool, 50>, 50> new_board;
+    for (const auto& cell : glider_gun) {
+        board[cell.first][cell.second] = true;
+    }
 
-        for (int idx = 0; idx < 50; idx++) {
-            for (int idy = 0; idy < 50; idy++) {
+    std::array<std::pair<int, int>, 8> relatives = {{
+        {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}
+    }};
+    
+    // For 100,000 iterations
+    for (int i = 0; i < 100000; ++i) {
+        std::array<std::array<bool, 50>, 50> new_board = {};
+
+        for (size_t idx = 0; idx < board.size(); ++idx) {
+            for (size_t idy = 0; idy < board[idx].size(); ++idy) {
                 int live_neighbors = 0;
 
-                for (auto&& rel: relatives) {
-                    try {
-                        if (board[idx + rel.first][idy + rel.second]) live_neighbors++;
-                    } catch (const std::out_of_range& e) {
-                        continue;
+                for (const auto& rel : relatives) {
+                    int new_i = static_cast<int>(idx) + rel.first;
+                    int new_j = static_cast<int>(idy) + rel.second;
+                    if (new_i >= 0 && new_i < 50 && new_j >= 0 && new_j < 50) {
+                        if (board[new_i][new_j]) {
+                            ++live_neighbors;
+                        }
                     }
                 }
 
                 if (board[idx][idy]) {
-                    new_board[idx][idy] = (live_neighbors == 2 || live_neighbors == 3) ? 1 : 0;
+                    new_board[idx][idy] = (live_neighbors == 2 || live_neighbors == 3);
                 } else {
-                    new_board[idx][idy] = (live_neighbors == 3) ? 1 : 0;
+                    new_board[idx][idy] = (live_neighbors == 3);
                 }
             }
         }
 
-         board = new_board;
+        board = new_board;
     }
 
-    std::array<std::pair<int, int>, 63> filled_cells = {
-        std::pair{1, 5}, std::pair{1, 6}, std::pair{2, 5}, std::pair{2, 6}, 
-        std::pair{7, 5}, std::pair{7, 6}, std::pair{7, 7}, std::pair{8, 5}, 
-        std::pair{8, 6}, std::pair{8, 7}, std::pair{9, 4}, std::pair{9, 8}, 
-        std::pair{11, 3}, std::pair{11, 4}, std::pair{11, 8}, std::pair{11, 9}, 
-        std::pair{16, 3}, std::pair{16, 4}, std::pair{16, 5}, std::pair{17, 7}, 
-        std::pair{17, 8}, std::pair{18, 7}, std::pair{18, 8}, std::pair{19, 8}, 
-        std::pair{19, 9}, std::pair{20, 6}, std::pair{20, 8}, std::pair{21, 6}, 
-        std::pair{21, 7}, std::pair{24, 1}, std::pair{24, 2}, std::pair{24, 6}, 
-        std::pair{24, 7}, std::pair{25, 1}, std::pair{25, 2}, std::pair{25, 6}, 
-        std::pair{25, 7}, std::pair{26, 13}, std::pair{27, 3}, std::pair{27, 4}, 
-        std::pair{27, 5}, std::pair{27, 14}, std::pair{27, 15}, std::pair{28, 3}, 
-        std::pair{28, 4}, std::pair{28, 5}, std::pair{28, 13}, std::pair{28, 14}, 
-        std::pair{29, 4}, std::pair{34, 20}, std::pair{34, 22}, std::pair{35, 3}, 
-        std::pair{35, 4}, std::pair{35, 21}, std::pair{35, 22}, std::pair{36, 3}, 
-        std::pair{36, 4}, std::pair{36, 21}, std::pair{41, 28}, std::pair{42, 29}, 
-        std::pair{42, 30}, std::pair{43, 28}, std::pair{43, 29}
-    };
+    std::array<std::pair<int, int>, 63> filled_cells = {{
+        {1, 5}, {1, 6}, {2, 5}, {2, 6}, {7, 5}, {7, 6}, {7, 7}, {8, 5}, {8, 6}, {8, 7},
+        {9, 4}, {9, 8}, {11, 3}, {11, 4}, {11, 8}, {11, 9}, {16, 3}, {16, 4}, {16, 5},
+        {17, 7}, {17, 8}, {18, 7}, {18, 8}, {19, 8}, {19, 9}, {20, 6}, {20, 8}, 
+        {21, 6}, {21, 7}, {24, 1}, {24, 2}, {24, 6}, {24, 7}, {25, 1}, {25, 2}, 
+        {25, 6}, {25, 7}, {26, 13}, {27, 3}, {27, 4}, {27, 5}, {27, 14}, {27, 15}, 
+        {28, 3}, {28, 4}, {28, 5}, {28, 13}, {28, 14}, {29, 4}, {34, 20}, 
+        {34, 22}, {35, 3}, {35, 4}, {35, 21}, {35, 22}, {36, 3}, {36, 4},
+        {36, 21}, {41, 28}, {42, 29}, {42, 30}, {43, 28}, {43, 29}
+    }};
 
-    for (auto&& cell: filled_cells) { assert(board[cell.first][cell.second] == 1); }
-
+    for (const auto& cell : filled_cells) {
+        if (board[cell.first][cell.second] != true) {
+            std::cerr << "Assertion failed at cell: (" << cell.first << ", " << cell.second << ")\n";
+            return 1;
+        }
+    }
 
     return 0;
 }

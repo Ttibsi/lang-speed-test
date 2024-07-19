@@ -30,13 +30,13 @@ setup() {
 
     if ! [ -x "$(command -v "python3.11")" ]; then
         echo "INSTALLING PYTHON"
-        add-apt-repository -y ppa:deadsnakes/ppa
+        yes 1 | add-apt-repository -y ppa:deadsnakes/ppa
         apt install -y python3.11 python3.12
     fi
 
     if ! [ -x "$(command -v rustc)" ]; then
         echo "INSTALLING RUST"
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        yes 1 | curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
         echo "export PATH=\"\$PATH:/root/.cargo/bin\"" >> /root/.bashrc
     fi
 
@@ -71,7 +71,7 @@ setup() {
 
     if ! [ -x "$(command -v zig)" ]; then
         echo "INSTALLING ZIG"
-        apt install -y xz-utils
+        apt install -y xz-utils -y
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
             curl -L https://ziglang.org/download/0.11.0/zig-linux-aarch64-0.11.0.tar.xz -o zig.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
@@ -84,23 +84,29 @@ setup() {
     fi
 
     if ! [ -x "$(command -v swift)" ]; then
+        echo "INSTALLING SWIFT"
         apt-get install binutils git gnupg2 libc6-dev libcurl4-openssl-dev libedit2 \
             libgcc-9-dev libncurses6 libpython3.8 libsqlite3-0 libstdc++-9-dev \
-            libxml2-dev libz3-dev pkg-config tzdata unzip zlib1g-dev
+            libxml2-dev libz3-dev pkg-config tzdata unzip zlib1g-dev -y
 
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204-aarch64/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04-aarch64.tar.gz -o swift.tar
+            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04.tar.gz -o swift.tar
             tar xzf swift.tar
             mkdir swiftlang
-            mv swift-5.10-RELEASE-ubuntu22.04-aarch64/* swiftlang
+            mv swift-5.10-RELEASE-ubuntu22.04/* swiftlang
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04.tar.gz -o swift.tar
+            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204-aarch64/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04-aarch64.tar.gz -o swift.tar
             tar xzf swift.tar
             mkdir swiftlang
             mv swift-5.10-RELEASE-ubuntu22.04/* swiftlang
         fi
         mv swiftlang /root/swiftlang
         echo "export PATH=\"\$PATH:/root/swiftlang/usr/bin\"" >> /root/.bashrc
+    fi
+
+    if ! [ -x "$(command -v "lua")" ]; then
+        echo "INSTALLING LUA"
+        apt install -y lua5.1 lua5.2 lua5.3 lua5.4
     fi
 
     echo "run 'source /root/.bashrc' after setup"
@@ -294,6 +300,42 @@ synthetic()  {
 		append_to_file "python3.12 (untyped),$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
+	if [ -x "$(command -v 'lua5.1')" ]; then
+		echo "running lua5.1"
+		size=$(stat -c%s "synthetic_test/syn.py")
+		time1=$({ TIMEFORMAT="%R"; time lua5.1 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time lua5.1 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time lua5.1 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		append_to_file "lua5.1,$size,$time1,$time2,$time3" "synthetic_results"
+    fi
+
+	if [ -x "$(command -v 'lua5.2')" ]; then
+		echo "running lua5.2"
+		size=$(stat -c%s "synthetic_test/syn.py")
+		time1=$({ TIMEFORMAT="%R"; time lua5.2 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time lua5.2 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time lua5.2 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		append_to_file "lua5.2,$size,$time1,$time2,$time3" "synthetic_results"
+    fi
+
+	if [ -x "$(command -v 'lua5.3')" ]; then
+		echo "running lua5.3"
+		size=$(stat -c%s "synthetic_test/syn.py")
+		time1=$({ TIMEFORMAT="%R"; time lua5.3 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time lua5.3 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time lua5.3 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		append_to_file "lua5.3,$size,$time1,$time2,$time3" "synthetic_results"
+    fi
+
+	if [ -x "$(command -v 'lua5.4')" ]; then
+		echo "running lua5.4"
+		size=$(stat -c%s "synthetic_test/syn.py")
+		time1=$({ TIMEFORMAT="%R"; time lua5.4 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time lua5.4 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time lua5.4 synthetic_test/syn.lua; } 2>&1 1>/dev/null)
+		append_to_file "lua5.4,$size,$time1,$time2,$time3" "synthetic_results"
+    fi
+
 	echo "COMPLETE"
 }
 
@@ -480,6 +522,53 @@ game-of-life() {
 
 		append_to_file "python3.12 (untyped),$size,$time1,$time2,$time3" "gol_results"
 	fi
+
+	if [ -x "$(command -v 'lua5.1')" ]; then
+		echo "running lua5.1"
+		size=$(stat -c%s "gol_test/gol.lua")
+		time1=$({ TIMEFORMAT="%R"; time lua5.1 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time lua5.1 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time lua5.1 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		append_to_file "lua5.1,$size,$time1,$time2,$time3" "gol_results"
+    fi
+
+	if [ -x "$(command -v 'lua5.2')" ]; then
+		echo "running lua5.2"
+		size=$(stat -c%s "gol_test/gol.lua")
+		time1=$({ TIMEFORMAT="%R"; time lua5.2 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time lua5.2 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time lua5.2 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		append_to_file "lua5.2,$size,$time1,$time2,$time3" "gol_results"
+    fi
+
+	if [ -x "$(command -v 'lua5.3')" ]; then
+		echo "running lua5.3"
+		size=$(stat -c%s "gol_test/gol.lua")
+		time1=$({ TIMEFORMAT="%R"; time lua5.3 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time lua5.3 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time lua5.3 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		append_to_file "lua5.3,$size,$time1,$time2,$time3" "gol_results"
+    fi
+
+	if [ -x "$(command -v 'lua5.4')" ]; then
+		echo "running lua5.4"
+		size=$(stat -c%s "gol_test/gol.lua")
+		time1=$({ TIMEFORMAT="%R"; time lua5.4 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time lua5.4 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time lua5.4 gol_test/gol.lua; } 2>&1 1>/dev/null)
+		append_to_file "lua5.4,$size,$time1,$time2,$time3" "gol_results"
+    fi
+
+    echo "COMPLETE"
+}
+
+clean() {
+	echo "CLEANING"
+    rm -rf *.tar
+    rm gol_zig.o 
+    rm llvm.sh
+    rm -rf swift*
+    rm -rf zig
 }
 
 if [ $# -eq 0 ]; then
@@ -497,5 +586,8 @@ elif [ $1 == "view-results" ]; then
 	exit 0
 elif [ $1 == "gol" ]; then
     game-of-life
+    exit 0
+elif [ $1 == "clean" ]; then
+    clean
     exit 0
 fi

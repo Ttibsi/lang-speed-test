@@ -93,7 +93,7 @@ setup() {
             curl -L https://download.swift.org/swift-5.10-release/ubuntu2204-aarch64/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04-aarch64.tar.gz -o swift.tar
             tar xzf swift.tar
             mkdir swiftlang
-            mv swift-5.10-RELEASE-ubuntu22.04/* swiftlang
+            mv swift-5.10-RELEASE-ubuntu22.04-aarch64/* swiftlang
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
             curl -L https://download.swift.org/swift-5.10-release/ubuntu2204/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04.tar.gz -o swift.tar
             tar xzf swift.tar

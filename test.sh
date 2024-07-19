@@ -31,7 +31,7 @@ setup() {
     if ! [ -x "$(command -v "python3.11")" ]; then
         echo "INSTALLING PYTHON"
         yes 1 | add-apt-repository -y ppa:deadsnakes/ppa
-        apt install -y python3.11 python3.12
+        apt install -y python3.10 python3.11 python3.12
     fi
 
     if ! [ -x "$(command -v rustc)" ]; then

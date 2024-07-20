@@ -28,11 +28,11 @@ setup() {
         bash llvm.sh
     fi
 
-    if ! [ -x "$(command -v "python3.11")" ]; then
-        echo "INSTALLING PYTHON"
-        yes 1 | add-apt-repository -y ppa:deadsnakes/ppa
-        apt install -y python3.10 python3.11 python3.12
-    fi
+    echo "INSTALLING PYTHON"
+    yes 1 | add-apt-repository -y ppa:deadsnakes/ppa
+    apt install -y python3.10 python3.11 python3.12
+    echo "INSTALLING LUA"
+    apt install -y lua5.1 lua5.2 lua5.3 lua5.4
 
     if ! [ -x "$(command -v rustc)" ]; then
         echo "INSTALLING RUST"
@@ -102,11 +102,6 @@ setup() {
         fi
         mv swiftlang /root/swiftlang
         echo "export PATH=\"\$PATH:/root/swiftlang/usr/bin\"" >> /root/.bashrc
-    fi
-
-    if ! [ -x "$(command -v "lua")" ]; then
-        echo "INSTALLING LUA"
-        apt install -y lua5.1 lua5.2 lua5.3 lua5.4
     fi
 
     echo "run 'source /root/.bashrc' after setup"
@@ -239,7 +234,7 @@ synthetic()  {
 		time2=$({ TIMEFORMAT="%R"; time out/synthetic/zig_cpp; } 2>&1 1>/dev/null)
 		time3=$({ TIMEFORMAT="%R"; time out/synthetic/zig_cpp; } 2>&1 1>/dev/null)
 
-		append_to_file "zig,$size,$time1,$time2,$time3" "synthetic_results"
+		append_to_file "zig_cpp,$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
 	if [ -f "out/synthetic/swift" ]; then

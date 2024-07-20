@@ -17,7 +17,7 @@ let relatives: [position] = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1
 // 100,000 iterations
 for _ in 1...100000 {
     var new_board = Array(repeating: Array(repeating: false, count: 50), count: 50)
-    for (idx, row) in new_board.enumerated() {
+    for (idx, row) in board.enumerated() {
         for (idy, cell) in row.enumerated() {
             // check each neighbor
             var live_neighbors = 0
@@ -26,8 +26,8 @@ for _ in 1...100000 {
                 let check_x = idx + rel.vert
                 let check_y = idy + rel.hor
 
-                if check_x < 0 || check_x > 50 { continue }
-                if check_y < 0 || check_y > 50 { continue }
+                if check_x < 0 || check_x >= 50 { continue }
+                if check_y < 0 || check_y >= 50 { continue }
                 if case board[check_x][check_y] = true {
                     live_neighbors += 1
                 }

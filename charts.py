@@ -62,8 +62,8 @@ def main() -> None:
             True
         )
 
-        line_chart.to_img(frame["binary size (bytes)"].plot())
-        bar_chart.to_img(frame.iloc[:,1:].plot())
+        line_chart.to_img(frame["binary size (bytes)"].plot(rot=90))
+        bar_chart.to_img(frame.iloc[:,1:].plot(rot=90))
 
     return
 

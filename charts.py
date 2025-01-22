@@ -6,6 +6,7 @@ from typing import TypeAlias
 
 try:
     import matplotlib.pyplot
+    import numpy
     import pandas
 except ModuleNotFoundError:
     print("Please ensure a virtualenv with pandas and matplotlib installed is present")
@@ -14,24 +15,21 @@ except ModuleNotFoundError:
 frame_t: TypeAlias = pandas.core.frame.DataFrame
 chart_t: TypeAlias = matplotlib.pyplot.Axes
 
-@dataclass 
+
+@dataclass
 class Chart:
     title: str
-    x_label: str 
-    y_label: str 
-    file_name: str 
-    bar_chart:bool
+    y_label: str
+    file_name: str
 
     def to_img(self, chart: chart_t):
         chart.set_title(self.title)
-        chart.set_xlabel(self.x_label)
+        chart.set_xlabel("Language")
         chart.set_ylabel(self.y_label)
 
-        if self.bar_chart:
-            chart.bar(0.3, 1)
-
-        chart.figure.savefig(self.file_name)
+        chart.figure.savefig(self.file_name, bbox_inches="tight")
         matplotlib.pyplot.close()
+
 
 def main() -> None:
     if len(sys.argv) != 2:
@@ -42,29 +40,40 @@ def main() -> None:
         os.makedirs("results/graphs")
 
     arch: str = sys.argv[1]
+    print(f"Generating graphs to results/graphs for arch {arch}")
 
-    with open(f"results/{arch}/synthetic_results.csv") as csv:
-        frame: frame_t = pandas.read_csv(csv, index_col = "binary name")
+    syn_csv = f"results/{arch}/synthetic_results.csv"
+    gol_csv = f"results/{arch}/gol_results.csv"
+    syn_frame: frame_t = pandas.read_csv(syn_csv, index_col="binary name")
+    gol_frame: frame_t = pandas.read_csv(gol_csv, index_col="binary name")
 
-        line_chart: Chart = Chart(
+    # Combine the same data set from multiple inputs
+    binsize_dataframe: frame_t = pandas.merge(
+        syn_frame["binary size (bytes)"],
+        gol_frame["binary size (bytes)"],
+        left_index=True,
+        right_index=True,
+    ).rename(columns={
+        "binary size (bytes)_x": "synthetic",
+        "binary size (bytes)_y": "gol",
+        })
+
+    line_chart: Chart = Chart(
             "Size Comparison",
-            "Language",
             "Binary size",
             f"results/graphs/size_comparison_{arch}.png",
-            False
-        )
+            )
 
-        bar_chart: Chart = Chart(
-            "Perf Comparison",
-            "Language",
+    bar_chart: Chart = Chart(
+            f"Perf Comparison ({arch})",
             "Time (seconds)",
             f"results/graphs/speed_comparison_{arch}.png",
-            True
-        )
+            )
 
-        line_chart.to_img(frame["binary size (bytes)"].plot(rot=90))
-        bar_chart.to_img(frame.iloc[:,1:].plot(rot=90))
-
+    line_chart.to_img(
+        binsize_dataframe.plot(rot=90, xticks=numpy.arange(len(syn_frame)))
+    )
+    bar_chart.to_img(syn_frame.iloc[:, 1:].plot(kind="bar", rot=90))
     return
 
 

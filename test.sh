@@ -13,7 +13,7 @@ setup() {
     sudo sudo apt update
     sudo sudo apt install -y curl
 
-    if ! [ -x "$(command -v "g++-13")" ]; then
+    if ! [ -x "$(command -v "g++-14")" ]; then
         echo "INSTALLING GDB"
         sudo apt install software-properties-common -y
         add-sudo apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -126,9 +126,9 @@ synthetic()  {
 	rm -rf out/synthetic
 	mkdir -p out/synthetic
 
-	if [ -x "$(command -v g++-13)" ]; then
+	if [ -x "$(command -v g++-14)" ]; then
 		echo "Building for g++"
-		g++-13 -std=c++20 synthetic_test/syn.cpp -o out/synthetic/g++_cpp
+		g++-14 -std=c++20 synthetic_test/syn.cpp -o out/synthetic/g++_cpp
 	fi
 
 	if [ -x "$(command -v clang++-18)" ]; then
@@ -366,9 +366,9 @@ game-of-life() {
 	rm -rf out/gol
 	mkdir -p out/gol
 
-	if [ -x "$(command -v g++-13)" ]; then
+	if [ -x "$(command -v g++-14)" ]; then
 		echo "Building for g++"
-		g++-13 -std=c++20 gol_test/gol.cpp -o out/gol/g++_cpp
+		g++-14 -std=c++20 gol_test/gol.cpp -o out/gol/g++_cpp
 	fi
 
 	if [ -x "$(command -v clang++-18)" ]; then

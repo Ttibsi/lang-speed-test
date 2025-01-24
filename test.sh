@@ -18,7 +18,7 @@ setup() {
         apt install software-properties-common -y
         add-apt-repository -y ppa:ubuntu-toolchain-r/test
         apt update 
-        apt install -y g++-13
+        apt install -y g++-14
     fi
 
     if ! [ -x "$(command -v "clang++-18")" ]; then
@@ -30,7 +30,8 @@ setup() {
 
     echo "INSTALLING PYTHON"
     yes 1 | add-apt-repository -y ppa:deadsnakes/ppa
-    apt install -y python3.10 python3.11 python3.12
+    apt install -y python3.10 python3.11 python3.12 python3.13
+
     echo "INSTALLING LUA"
     apt install -y lua5.1 lua5.2 lua5.3 lua5.4
 
@@ -44,9 +45,9 @@ setup() {
         echo "INSTALLING GO"
 
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-            curl -L  https://go.dev/dl/go1.22.1.linux-arm64.tar.gz -o go.tar
+            curl -L  https://go.dev/dl/go1.23.5.linux-arm64.tar.gz -o go.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-            curl -L  https://go.dev/dl/go1.22.1.linux-amd64.tar.gz -o go.tar
+            curl -L  https://go.dev/dl/go1.23.5.linux-amd64.tar.gz -o go.tar
         fi
 
         tar -xzf go.tar
@@ -59,9 +60,10 @@ setup() {
         echo "INSTALLING JAVA"
         # https://jdk.java.net/21/
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-            curl -L https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-aarch64_bin.tar.gz -o java.tar
+            curl -L https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_linux-aarch64_bin.tar.gz -o java.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-            curl -L https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-x64_bin.tar.gz -o java.tar
+            curl -L https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_linux-x64_bin.tar.gz -o java.tar
+	    
         fi
 
         tar -xzf java.tar
@@ -73,9 +75,9 @@ setup() {
         echo "INSTALLING ZIG"
         apt install -y xz-utils -y
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-            curl -L https://ziglang.org/download/0.11.0/zig-linux-aarch64-0.11.0.tar.xz -o zig.tar
+            curl -L https://ziglang.org/download/0.13.0/zig-linux-aarch64-0.13.0.tar.xz -o zig.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-            curl -L https://ziglang.org/download/0.11.0/zig-linux-x86_64-0.11.0.tar.xz -o zig.tar
+            curl -L https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz -o zig.tar
         fi
         mkdir zig
         tar -xf zig.tar -C zig
@@ -90,13 +92,14 @@ setup() {
             libxml2-dev libz3-dev pkg-config tzdata unzip zlib1g-dev -y
 
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204-aarch64/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04-aarch64.tar.gz -o swift.tar
+            curl -L https://download.swift.org/swift-6.0.3-release/ubuntu2404-aarch64/swift-6.0.3-RELEASE/swift-6.0.3-RELEASE-ubuntu24.04-aarch64.tar.gz -o swift.tar
             tar xzf swift.tar
             mkdir swiftlang
             mv swift-5.10-RELEASE-ubuntu22.04-aarch64/* swiftlang
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04.tar.gz -o swift.tar
+            curl -L https://download.swift.org/swift-6.0.3-release/ubuntu2404/swift-6.0.3-RELEASE/swift-6.0.3-RELEASE-ubuntu24.04.tar.gz -o swift.tar
             tar xzf swift.tar
+	    
             mkdir swiftlang
             mv swift-5.10-RELEASE-ubuntu22.04/* swiftlang
         fi

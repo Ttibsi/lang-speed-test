@@ -1,0 +1,22 @@
+name: main
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  arm-build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt update
+      - run: sudo bash test.sh setup arm
+      - run: SPEEDTEST_ITERS=1000000 bash test.sh synthetic && bash test.sh gol
+      - run: mv out/* results/ && git add results && git commit -m "GENERATED ARM OUTPUT" && git push origin HEAD
+
+  x86-build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt update
+      - run: sudo bash test.sh setup x86
+      - run: SPEEDTEST_ITERS=1000000 bash test.sh synthetic && bash test.sh gol
+      - run: mv out/* results/ && git add results && git commit -m "GENERATED ARM OUTPUT" && git push origin HEAD

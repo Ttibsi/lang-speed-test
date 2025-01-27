@@ -1,0 +1,44 @@
+name: main
+on:
+  pull_request:
+    branches: [ main ]
+jobs:
+  arm-build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - run: sudo apt update
+      - run: sudo bash test.sh setup arm
+      - run: SPEEDTEST_ITERS=1000000 bash test.sh synthetic && bash test.sh gol
+      - uses: actions/setup-python@v5
+      - run: pip install matplotlib numpy pandas
+      - run: python3 charts.py arm
+      - run: mv out/*.csv results/arm/
+      - run: |
+          git pull
+          git config --global user.name 'Ttibsi'
+          git config --global user.email '60970073+Ttibsi@users.noreply.github.com'
+          git commit -am "GENERATED ARM OUTPUT"
+          git push
+
+  x86-build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - run: sudo apt update
+      - run: sudo bash test.sh setup x86
+      - run: SPEEDTEST_ITERS=1000000 bash test.sh synthetic && bash test.sh gol
+      - uses: actions/setup-python@v5
+      - run: pip install matplotlib numpy pandas
+      - run: python3 charts.py x86
+      - run: mv out/*.csv results/x86/
+      - run: |
+          git pull
+          git config --global user.name 'Ttibsi'
+          git config --global user.email '60970073+Ttibsi@users.noreply.github.com'
+          git commit -am "GENERATED x86 OUTPUT"
+          git push

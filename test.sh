@@ -10,33 +10,34 @@ setup() {
     fi 
 
     echo "SETTING UP ENVIRONMENT..."
-    apt update
-    apt install -y curl
+    sudo sudo apt update
+    sudo sudo apt install -y curl
 
-    if ! [ -x "$(command -v "g++-13")" ]; then
+    if ! [ -x "$(command -v "g++-14")" ]; then
         echo "INSTALLING GDB"
-        apt install software-properties-common -y
-        add-apt-repository -y ppa:ubuntu-toolchain-r/test
-        apt update 
-        apt install -y g++-13
+        sudo apt install software-properties-common -y
+        add-sudo apt-repository -y ppa:ubuntu-toolchain-r/test
+        sudo apt update 
+        sudo apt install -y g++-14
     fi
 
     if ! [ -x "$(command -v "clang++-18")" ]; then
         echo "INSTALLING CLANG"
-        apt install lsb-release wget software-properties-common gnupg -y
-        curl https://apt.llvm.org/llvm.sh -o llvm.sh
+        sudo apt install lsb-release wget software-properties-common gnupg -y
+        curl https://sudo apt.llvm.org/llvm.sh -o llvm.sh
         bash llvm.sh
     fi
 
     echo "INSTALLING PYTHON"
     yes 1 | add-apt-repository -y ppa:deadsnakes/ppa
-    apt install -y python3.10 python3.11 python3.12
+    sudo apt install -y python3.10 python3.11 python3.12 python3.13
+
     echo "INSTALLING LUA"
-    apt install -y lua5.1 lua5.2 lua5.3 lua5.4
+    sudo apt install -y lua5.1 lua5.2 lua5.3 lua5.4
 
     if ! [ -x "$(command -v rustc)" ]; then
         echo "INSTALLING RUST"
-        yes 1 | curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
         echo "export PATH=\"\$PATH:/root/.cargo/bin\"" >> /root/.bashrc
     fi
 
@@ -44,9 +45,9 @@ setup() {
         echo "INSTALLING GO"
 
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-            curl -L  https://go.dev/dl/go1.22.1.linux-arm64.tar.gz -o go.tar
+            curl -L  https://go.dev/dl/go1.23.5.linux-arm64.tar.gz -o go.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-            curl -L  https://go.dev/dl/go1.22.1.linux-amd64.tar.gz -o go.tar
+            curl -L  https://go.dev/dl/go1.23.5.linux-amd64.tar.gz -o go.tar
         fi
 
         tar -xzf go.tar
@@ -59,9 +60,10 @@ setup() {
         echo "INSTALLING JAVA"
         # https://jdk.java.net/21/
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-            curl -L https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-aarch64_bin.tar.gz -o java.tar
+            curl -L https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_linux-aarch64_bin.tar.gz -o java.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-            curl -L https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-x64_bin.tar.gz -o java.tar
+            curl -L https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_linux-x64_bin.tar.gz -o java.tar
+	    
         fi
 
         tar -xzf java.tar
@@ -71,11 +73,11 @@ setup() {
 
     if ! [ -x "$(command -v zig)" ]; then
         echo "INSTALLING ZIG"
-        apt install -y xz-utils -y
+        sudo apt install -y xz-utils -y
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-            curl -L https://ziglang.org/download/0.11.0/zig-linux-aarch64-0.11.0.tar.xz -o zig.tar
+            curl -L https://ziglang.org/download/0.13.0/zig-linux-aarch64-0.13.0.tar.xz -o zig.tar
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-            curl -L https://ziglang.org/download/0.11.0/zig-linux-x86_64-0.11.0.tar.xz -o zig.tar
+            curl -L https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz -o zig.tar
         fi
         mkdir zig
         tar -xf zig.tar -C zig
@@ -85,18 +87,19 @@ setup() {
 
     if ! [ -x "$(command -v swift)" ]; then
         echo "INSTALLING SWIFT"
-        apt-get install binutils git gnupg2 libc6-dev libcurl4-openssl-dev libedit2 \
+        sudo apt-get install binutils git gnupg2 libc6-dev libcurl4-openssl-dev libedit2 \
             libgcc-9-dev libncurses6 libpython3.8 libsqlite3-0 libstdc++-9-dev \
             libxml2-dev libz3-dev pkg-config tzdata unzip zlib1g-dev -y
 
         if [[ ${ARCH} == "${valid_arches[0]}" ]]; then
-            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204-aarch64/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04-aarch64.tar.gz -o swift.tar
+            curl -L https://download.swift.org/swift-6.0.3-release/ubuntu2404-aarch64/swift-6.0.3-RELEASE/swift-6.0.3-RELEASE-ubuntu24.04-aarch64.tar.gz -o swift.tar
             tar xzf swift.tar
             mkdir swiftlang
             mv swift-5.10-RELEASE-ubuntu22.04-aarch64/* swiftlang
         elif [[ ${ARCH} == "${valid_arches[1]}" ]]; then
-            curl -L https://download.swift.org/swift-5.10-release/ubuntu2204/swift-5.10-RELEASE/swift-5.10-RELEASE-ubuntu22.04.tar.gz -o swift.tar
+            curl -L https://download.swift.org/swift-6.0.3-release/ubuntu2404/swift-6.0.3-RELEASE/swift-6.0.3-RELEASE-ubuntu24.04.tar.gz -o swift.tar
             tar xzf swift.tar
+	    
             mkdir swiftlang
             mv swift-5.10-RELEASE-ubuntu22.04/* swiftlang
         fi
@@ -123,9 +126,9 @@ synthetic()  {
 	rm -rf out/synthetic
 	mkdir -p out/synthetic
 
-	if [ -x "$(command -v g++-13)" ]; then
+	if [ -x "$(command -v g++-14)" ]; then
 		echo "Building for g++"
-		g++-13 -std=c++20 synthetic_test/syn.cpp -o out/synthetic/g++_cpp
+		g++-14 -std=c++20 synthetic_test/syn.cpp -o out/synthetic/g++_cpp
 	fi
 
 	if [ -x "$(command -v clang++-18)" ]; then
@@ -135,7 +138,7 @@ synthetic()  {
 
 	if [ -x "$(command -v rustc)" ]; then
 		echo "Building for rust"
-		apt install build-essential -y
+		sudo apt install build-essential -y
 		rustc synthetic_test/syn.rs -o out/synthetic/rust
 	fi
 
@@ -295,6 +298,22 @@ synthetic()  {
 		append_to_file "python3.12 (untyped),$size,$time1,$time2,$time3" "synthetic_results"
 	fi
 
+	if [ -x "$(command -v 'python3.13')" ]; then
+		echo "running python3.13"
+		size=$(stat -c%s "synthetic_test/syn.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.13 synthetic_test/syn.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.13 synthetic_test/syn.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.13 synthetic_test/syn.py; } 2>&1 1>/dev/null)
+		append_to_file "python3.13,$size,$time1,$time2,$time3" "synthetic_results"
+
+		size=$(stat -c%s "synthetic_test/syn_untyped.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.13 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.13 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.13 synthetic_test/syn_untyped.py; } 2>&1 1>/dev/null)
+
+		append_to_file "python3.13 (untyped),$size,$time1,$time2,$time3" "synthetic_results"
+	fi
+
 	if [ -x "$(command -v 'lua5.1')" ]; then
 		echo "running lua5.1"
 		size=$(stat -c%s "synthetic_test/syn.py")
@@ -336,7 +355,7 @@ synthetic()  {
 
 view_synthetic() {
 	if ! [ -x "$(command -v csvtool)" ]; then
-		apt install csvtool -y
+		sudo apt install csvtool -y
 	fi
 	csvtool readable out/synthetic_results.csv | view -
 	csvtool readable out/gol_results.csv | view -
@@ -347,9 +366,9 @@ game-of-life() {
 	rm -rf out/gol
 	mkdir -p out/gol
 
-	if [ -x "$(command -v g++-13)" ]; then
+	if [ -x "$(command -v g++-14)" ]; then
 		echo "Building for g++"
-		g++-13 -std=c++20 gol_test/gol.cpp -o out/gol/g++_cpp
+		g++-14 -std=c++20 gol_test/gol.cpp -o out/gol/g++_cpp
 	fi
 
 	if [ -x "$(command -v clang++-18)" ]; then
@@ -359,7 +378,7 @@ game-of-life() {
 
 	if [ -x "$(command -v rustc)" ]; then
 		echo "Building for rust"
-		apt install build-essential -y
+		sudo apt install build-essential -y
 		rustc gol_test/gol.rs -o out/gol/rust
 	fi
 
@@ -516,6 +535,22 @@ game-of-life() {
 		time3=$({ TIMEFORMAT="%R"; time python3.12 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
 
 		append_to_file "python3.12 (untyped),$size,$time1,$time2,$time3" "gol_results"
+	fi
+
+	if [ -x "$(command -v 'python3.13')" ]; then
+		echo "running python3.13"
+		size=$(stat -c%s "gol_test/gol.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.13 gol_test/gol.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.13 gol_test/gol.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.13 gol_test/gol.py; } 2>&1 1>/dev/null)
+		append_to_file "python3.13,$size,$time1,$time2,$time3" "gol_results"
+
+		size=$(stat -c%s "gol_test/gol_untyped.py")
+		time1=$({ TIMEFORMAT="%R"; time python3.13 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+		time2=$({ TIMEFORMAT="%R"; time python3.13 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+		time3=$({ TIMEFORMAT="%R"; time python3.13 gol_test/gol_untyped.py; } 2>&1 1>/dev/null)
+
+		append_to_file "python3.13 (untyped),$size,$time1,$time2,$time3" "gol_results"
 	fi
 
 	if [ -x "$(command -v 'lua5.1')" ]; then
